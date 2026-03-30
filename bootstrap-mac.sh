@@ -51,8 +51,10 @@ log "Installing CLI tools..."
 brew_install git
 brew_install openssh
 brew_install nvm
+brew_install bun
 brew_install docker
 brew_install colima
+brew_install stow
 
 # ----------------------------
 # GUI apps
@@ -108,29 +110,27 @@ fi
 eval "$(ssh-agent -s)" >/dev/null
 ssh-add --apple-use-keychain "$KEY" 2>/dev/null || ssh-add "$KEY" || true
 
-# SSH config for GitHub
-SSH_CFG="$HOME/.ssh/config"
-touch "$SSH_CFG"
-chmod 600 "$SSH_CFG"
+# ----------------------------
+# Symlink dotfiles (Stow)
+# ----------------------------
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-if ! grep -q 'Host github-personal' "$SSH_CFG" 2>/dev/null; then
-  log "Adding GitHub SSH config..."
-  cat >> "$SSH_CFG" <<'EOF'
+log "Linking dotfiles with Stow..."
+touch "$HOME/.env.secrets"
 
-# --- personal GitHub ---
-IgnoreUnknown UseKeychain
+# Back up existing files that would conflict with Stow
+for f in .zshrc .ssh/config; do
+  target="$HOME/$f"
+  if [[ -e "$target" && ! -L "$target" ]]; then
+    backup="${target}.backup.$(date +%Y%m%d%H%M%S)"
+    warn "Backing up $target → $backup"
+    mv "$target" "$backup"
+  fi
+done
 
-Host github-personal
-  HostName github.com
-  User git
-  IdentityFile ~/.ssh/id_ed25519_personal
-  IdentitiesOnly yes
-  AddKeysToAgent yes
-  UseKeychain yes
-EOF
-else
-  log "GitHub SSH config already present"
-fi
+stow -d "$SCRIPT_DIR" -t "$HOME" dotfiles
+chmod 600 "$HOME/.ssh/config"
+log "Dotfiles linked"
 
 # ----------------------------
 # Git config (personal)
@@ -138,7 +138,7 @@ fi
 log "Configuring git..."
 git config --global user.name "rishikhesh"
 git config --global user.email "rishiyashvanth@gmail.com"
-git config --global init.defaultBranch main
+git config --global init.defaultBranch beta
 git config --global fetch.prune true
 git config --global pull.rebase true
 git config --global gpg.format ssh

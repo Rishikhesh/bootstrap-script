@@ -1,0 +1,15 @@
+# Secrets
+.env*
+*.secrets
+
+# SSH private keys
+dotfiles/.ssh/id_*
+dotfiles/.ssh/known_hosts*
+!dotfiles/.ssh/config
+
+# macOS
+.DS_Store
+
+# Editor
+*.swp
+*~
