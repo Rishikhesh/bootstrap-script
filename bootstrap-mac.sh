@@ -52,6 +52,7 @@ brew update
 PACKAGES=(
   "formula:git"        "formula:openssh"   "formula:nvm"       "formula:bun"
   "formula:docker"     "formula:colima"    "formula:stow"      "formula:eza"
+  "formula:zoxide"     "formula:fzf"       "formula:bat"       "formula:fd"
   "formula:starship"   "formula:zsh-autosuggestions"
   "formula:zsh-fast-syntax-highlighting"  "formula:fastfetch"
   "cask:arc"           "cask:cursor"       "cask:ghostty"      "cask:raycast"
@@ -139,7 +140,7 @@ log "Linking dotfiles with Stow..."
 touch "$HOME/.env.secrets"
 
 # Back up existing files that would conflict with Stow
-for f in .zshrc .ssh/config .config/ghostty/config .config/starship.toml; do
+for f in .zshrc .ssh/config .config/bat/config .config/ghostty/config .config/starship.toml; do
   target="$HOME/$f"
   if [[ -e "$target" && ! -L "$target" ]]; then
     backup="${target}.backup.$(date +%Y%m%d%H%M%S)"

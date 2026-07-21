@@ -4,23 +4,49 @@ source ~/.env.secrets
 # ---- Homebrew prefix (cached once) ----
 BREW_PREFIX="$(brew --prefix 2>/dev/null)"
 
-# ---- Startup banner (ghost + stats) ----
-# Only render when the pane is wide enough for side-by-side; narrow splits stay clean.
-[[ -o interactive ]] && command -v fastfetch >/dev/null 2>&1 && (( ${COLUMNS:-0} >= 100 )) && fastfetch
+# ---- Clean full-screen Ghostty intro + static system stats ----
+# Narrow or short splits skip the animation and stay clean.
+if [[ -o interactive && $TERM_PROGRAM == ghostty ]] \
+  && (( ${COLUMNS:-0} >= 100 && ${LINES:-0} >= 22 )); then
+  zsh ~/.config/fastfetch/ghostty-intro.zsh
+fi
 
 # ---- NVM ----
 export NVM_DIR="$HOME/.nvm"
-[ -s "$BREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$BREW_PREFIX/opt/nvm/nvm.sh"
-[ -s "$BREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
+
+load-nvm() {
+  (( ${NVM_IS_LOADED:-0} )) && return 0
+
+  local nvm_script="$BREW_PREFIX/opt/nvm/nvm.sh"
+
+  [[ -s "$nvm_script" ]] || {
+    print -u2 "NVM is not installed at $nvm_script"
+    return 1
+  }
+
+  # Remove the command shims before NVM adds Node to PATH.
+  unfunction nvm node npm npx corepack yarn pnpm 2>/dev/null
+  \. "$nvm_script" || return
+  typeset -g NVM_IS_LOADED=1
+}
+
+# Load NVM only when a Node command is used.
+nvm()      { load-nvm || return; nvm "$@"; }
+node()     { load-nvm || return; command node "$@"; }
+npm()      { load-nvm || return; command npm "$@"; }
+npx()      { load-nvm || return; command npx "$@"; }
+corepack() { load-nvm || return; command corepack "$@"; }
+yarn()     { load-nvm || return; command yarn "$@"; }
+pnpm()     { load-nvm || return; command pnpm "$@"; }
 
 # ---- Auto .nvmrc ----
 autoload -U add-zsh-hook
 
 load-nvmrc() {
-  command -v nvm >/dev/null 2>&1 || return
-
   local nvmrc_path="$PWD/.nvmrc"
   [[ -f "$nvmrc_path" ]] || return
+
+  load-nvm || return
 
   local node_version current_version installed_version
   IFS= read -r node_version < "$nvmrc_path"
@@ -53,14 +79,42 @@ export PATH="$BREW_PREFIX/opt/openssh/bin:$PATH"
 # ---- Local bin ----
 export PATH="$HOME/.local/bin:$PATH"
 
+# ---- Fuzzy finding (fd + fzf + bat) ----
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git --exclude node_modules'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git --exclude node_modules'
+export FZF_DEFAULT_OPTS='--height=60% --layout=reverse --border=rounded --info=inline --prompt="> " --pointer=">" --marker=">" --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8,fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc,marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8'
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}' --preview-window=right:60%:wrap"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --color=always --icons {}' --preview-window=right:60%:wrap"
+
+_fzf_compgen_path() {
+  fd --hidden --follow --exclude .git --exclude node_modules . "$1"
+}
+
+_fzf_compgen_dir() {
+  fd --type d --hidden --follow --exclude .git --exclude node_modules . "$1"
+}
+
+[[ -r "$BREW_PREFIX/opt/fzf/shell/completion.zsh" ]] && source "$BREW_PREFIX/opt/fzf/shell/completion.zsh"
+[[ -r "$BREW_PREFIX/opt/fzf/shell/key-bindings.zsh" ]] && source "$BREW_PREFIX/opt/fzf/shell/key-bindings.zsh"
+
+# ---- Smart directory jumping ----
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+
+# ---- File viewing (bat) ----
+alias cat='bat --paging=never'
+
 # ---- System info (manual flex) ----
 alias ff='fastfetch'
 
 # ---- Listing (eza) ----
 alias ls='eza --icons --group-directories-first'
-alias ll='eza -lah --icons --git --group-directories-first'
+alias ll='eza -lah --header --icons --git --hyperlink=always --color-scale=age,size --group-directories-first'
 alias la='eza -a --icons --group-directories-first'
-alias lt='eza --tree --level=2 --icons'
+alias lt='eza --tree --level=3 --git-ignore --icons --hyperlink=always'
+alias lc='eza --code --git-ignore'
+alias lr='eza -lah --sort=modified --reverse --icons --group-directories-first'
+alias ld='eza --only-dirs --icons --group-directories-first'
 
 # ---- Git aliases ----
 alias gco='git checkout'

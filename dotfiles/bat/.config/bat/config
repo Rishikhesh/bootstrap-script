@@ -1,0 +1,5 @@
+# Match the terminal theme while keeping output useful for source code.
+--theme="Catppuccin Mocha"
+--style="numbers,changes,header"
+--italic-text=always
+--paging=auto
