@@ -31,12 +31,13 @@ if ! command -v brew >/dev/null 2>&1; then
   log "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-  if [[ -x /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+  BREW_BIN=""
+  [[ -x /opt/homebrew/bin/brew ]] && BREW_BIN=/opt/homebrew/bin/brew
+  [[ -x /usr/local/bin/brew ]] && BREW_BIN=/usr/local/bin/brew
+  if [[ -n "$BREW_BIN" ]]; then
+    eval "$("$BREW_BIN" shellenv)"
     grep -q 'brew shellenv' ~/.zprofile 2>/dev/null || \
-      echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-  elif [[ -x /usr/local/bin/brew ]]; then
-    eval "$(/usr/local/bin/brew shellenv)" || true
+      echo "eval \"\$($BREW_BIN shellenv)\"" >> ~/.zprofile
   fi
 else
   log "Homebrew already installed"
@@ -55,6 +56,12 @@ brew_install bun
 brew_install docker
 brew_install colima
 brew_install stow
+# Terminal ricing
+brew_install eza
+brew_install starship
+brew_install zsh-autosuggestions
+brew_install zsh-fast-syntax-highlighting
+brew_install fastfetch
 
 # ----------------------------
 # GUI apps
@@ -62,10 +69,11 @@ brew_install stow
 log "Installing GUI apps..."
 brew_cask_install arc
 brew_cask_install cursor
-brew_cask_install warp
+brew_cask_install ghostty
 brew_cask_install raycast
 brew_cask_install rectangle
 brew_cask_install bruno
+brew_cask_install font-jetbrains-mono-nerd-font
 
 brew cleanup || true
 
@@ -76,11 +84,8 @@ log "Configuring NVM..."
 mkdir -p ~/.nvm
 export NVM_DIR="$HOME/.nvm"
 
-if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
-  . "/opt/homebrew/opt/nvm/nvm.sh"
-elif [[ -s "/usr/local/opt/nvm/nvm.sh" ]]; then
-  . "/usr/local/opt/nvm/nvm.sh"
-fi
+NVM_SH="$(brew --prefix nvm 2>/dev/null)/nvm.sh"
+[[ -s "$NVM_SH" ]] && . "$NVM_SH"
 
 if command -v nvm >/dev/null 2>&1; then
   nvm install --lts >/dev/null
@@ -98,7 +103,7 @@ log "Setting up SSH..."
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 
-KEY="$HOME/.ssh/id_ed25519_personal"
+KEY="$HOME/.ssh/id_ed25519"
 
 if [[ ! -f "$KEY" ]]; then
   read -r -p "Email for SSH key: " SSH_EMAIL
@@ -119,7 +124,7 @@ log "Linking dotfiles with Stow..."
 touch "$HOME/.env.secrets"
 
 # Back up existing files that would conflict with Stow
-for f in .zshrc .ssh/config; do
+for f in .zshrc .ssh/config .config/ghostty/config .config/starship.toml; do
   target="$HOME/$f"
   if [[ -e "$target" && ! -L "$target" ]]; then
     backup="${target}.backup.$(date +%Y%m%d%H%M%S)"
@@ -128,7 +133,9 @@ for f in .zshrc .ssh/config; do
   fi
 done
 
-stow -d "$SCRIPT_DIR" -t "$HOME" dotfiles
+# Link every package folder under dotfiles/ (zsh, ssh, ghostty, starship, ...).
+# Add a new tool = add a new folder; no script edit needed.
+( cd "$SCRIPT_DIR/dotfiles" && stow -t "$HOME" */ )
 chmod 600 "$HOME/.ssh/config"
 log "Dotfiles linked"
 
