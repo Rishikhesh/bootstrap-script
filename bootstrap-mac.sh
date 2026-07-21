@@ -14,6 +14,19 @@ brew_cask_install() {
   brew list --cask "$1" >/dev/null 2>&1 || brew install --cask "$1"
 }
 
+# Set a global git config key only when it has no value yet.
+# Existing values are never overwritten on re-run.
+git_config_default() {
+  local key="$1" val="$2" current
+  current="$(git config --global --get "$key" 2>/dev/null || true)"
+  if [[ -n "$current" ]]; then
+    log "  git $key already set: $current (keeping)"
+  else
+    git config --global "$key" "$val"
+    log "  git $key = $val"
+  fi
+}
+
 # ----------------------------
 # Xcode CLI Tools
 # ----------------------------
@@ -104,10 +117,20 @@ NVM_SH="$(brew --prefix nvm 2>/dev/null)/nvm.sh"
 [[ -s "$NVM_SH" ]] && . "$NVM_SH"
 
 if command -v nvm >/dev/null 2>&1; then
-  nvm install --lts >/dev/null
-  nvm use --lts >/dev/null
-  nvm alias default lts/* >/dev/null
-  log "Default Node (LTS): $(node -v)"
+  if nvm ls --no-colors 'lts/*' >/dev/null 2>&1; then
+    log "Node LTS already installed via nvm"
+  else
+    nvm install --lts >/dev/null
+  fi
+
+  # Don't clobber an existing default alias.
+  CURRENT_DEFAULT="$(nvm alias default --no-colors 2>/dev/null | head -1 || true)"
+  if [[ -n "$CURRENT_DEFAULT" ]]; then
+    log "nvm default alias already set: $CURRENT_DEFAULT (keeping)"
+  else
+    nvm alias default 'lts/*' >/dev/null
+    log "nvm default alias = lts/*"
+  fi
 else
   warn "nvm not available yet — restart terminal after script completes"
 fi
@@ -120,16 +143,26 @@ mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 
 KEY="$HOME/.ssh/id_ed25519"
+KEY_IS_NEW=0
 
 if [[ ! -f "$KEY" ]]; then
   read -r -p "Email for SSH key: " SSH_EMAIL
   ssh-keygen -t ed25519 -C "$SSH_EMAIL" -f "$KEY"
+  KEY_IS_NEW=1
 else
-  log "SSH key already exists: $KEY"
+  log "SSH key already exists: $KEY (not regenerated)"
 fi
 
-eval "$(ssh-agent -s)" >/dev/null
-ssh-add --apple-use-keychain "$KEY" 2>/dev/null || ssh-add "$KEY" || true
+# Reuse the running agent if there is one; only spawn a new one otherwise.
+if [[ -z "${SSH_AUTH_SOCK:-}" ]] || ! ssh-add -l >/dev/null 2>&1; then
+  eval "$(ssh-agent -s)" >/dev/null
+fi
+
+if ssh-add -l 2>/dev/null | grep -q "$(ssh-keygen -lf "$KEY.pub" | awk '{print $2}')"; then
+  log "SSH key already loaded in agent"
+else
+  ssh-add --apple-use-keychain "$KEY" 2>/dev/null || ssh-add "$KEY" || true
+fi
 
 # ----------------------------
 # Symlink dotfiles (Stow)
@@ -137,36 +170,54 @@ ssh-add --apple-use-keychain "$KEY" 2>/dev/null || ssh-add "$KEY" || true
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 log "Linking dotfiles with Stow..."
-touch "$HOME/.env.secrets"
+[[ -e "$HOME/.env.secrets" ]] || touch "$HOME/.env.secrets"
 
-# Back up existing files that would conflict with Stow
-for f in .zshrc .ssh/config .config/bat/config .config/ghostty/config .config/starship.toml; do
-  target="$HOME/$f"
-  if [[ -e "$target" && ! -L "$target" ]]; then
-    backup="${target}.backup.$(date +%Y%m%d%H%M%S)"
-    warn "Backing up $target → $backup"
+# Let Stow itself report conflicts (dry-run), then back up ONLY the real files
+# it names. Never walk the tree by hand: a target path can be a symlink into
+# this repo, and testing/moving through it would rename files inside the repo.
+STAMP="$(date +%Y%m%d%H%M%S)"
+PACKAGES_DIR="$SCRIPT_DIR/dotfiles"
+STOW_PKGS=()
+for d in "$PACKAGES_DIR"/*/; do STOW_PKGS+=("$(basename "$d")"); done
+
+# Stow names each blocking file relative to $HOME. Across stow versions the
+# phrasing differs, so match both known forms:
+#   "cannot stow SRC over existing target <path> since neither a link nor a directory ..."
+#   "existing target is neither a link nor a directory: <path>"
+conflicts="$(cd "$PACKAGES_DIR" && stow -n -v --restow -t "$HOME" "${STOW_PKGS[@]}" 2>&1 \
+  | sed -n \
+      -e 's/.*over existing target \(.*\) since neither a link nor a directory.*/\1/p' \
+      -e 's/.*existing target is neither a link nor a directory: \(.*\)/\1/p')"
+
+if [[ -n "$conflicts" ]]; then
+  while IFS= read -r rel; do
+    [[ -z "$rel" ]] && continue
+    target="$HOME/$rel"
+    backup="${target}.backup.${STAMP}"
+    warn "Backing up $target -> $backup"
     mv "$target" "$backup"
-  fi
-done
+  done <<< "$conflicts"
+fi
 
 # Link every package folder under dotfiles/ (zsh, ssh, ghostty, starship, ...).
 # Add a new tool = add a new folder; no script edit needed.
-( cd "$SCRIPT_DIR/dotfiles" && stow -t "$HOME" */ )
-chmod 600 "$HOME/.ssh/config"
+# --restow cleans stale links first so re-runs converge instead of erroring.
+( cd "$PACKAGES_DIR" && stow --restow -t "$HOME" "${STOW_PKGS[@]}" )
+[[ -e "$HOME/.ssh/config" ]] && chmod 600 "$HOME/.ssh/config"
 log "Dotfiles linked"
 
 # ----------------------------
 # Git config (personal)
 # ----------------------------
-log "Configuring git..."
-git config --global user.name "rishikhesh"
-git config --global user.email "rishiyashvanth@gmail.com"
-git config --global init.defaultBranch beta
-git config --global fetch.prune true
-git config --global pull.rebase true
-git config --global gpg.format ssh
-git config --global commit.gpgsign true
-git config --global user.signingkey "$KEY.pub"
+log "Configuring git (existing values are preserved)..."
+git_config_default user.name "rishikhesh"
+git_config_default user.email "rishiyashvanth@gmail.com"
+git_config_default init.defaultBranch beta
+git_config_default fetch.prune true
+git_config_default pull.rebase true
+git_config_default gpg.format ssh
+git_config_default commit.gpgsign true
+git_config_default user.signingkey "$KEY.pub"
 
 # ----------------------------
 # Start Colima
@@ -194,7 +245,8 @@ echo "  4) Restart terminal"
 echo "  5) Per repo: run 'nvm install' / 'nvm use' when .nvmrc is present"
 echo ""
 
-if command -v pbcopy >/dev/null 2>&1; then
-  cat "${KEY}.pub" | pbcopy
+# Only hijack the clipboard when the key was just created.
+if [[ "$KEY_IS_NEW" == "1" ]] && command -v pbcopy >/dev/null 2>&1; then
+  pbcopy < "${KEY}.pub"
   log "SSH public key copied to clipboard"
 fi
