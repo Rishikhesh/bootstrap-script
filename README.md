@@ -13,6 +13,9 @@ cd ~/personal/bootstrap-script
 
 Safe to re-run — every step is idempotent.
 
+At the start it lists all packages (all selected by default); enter the numbers
+you want to **skip** (space-separated), or just press Enter to install everything.
+
 ## What it installs
 
 - **CLI**: git, openssh, nvm, bun, docker, colima, stow

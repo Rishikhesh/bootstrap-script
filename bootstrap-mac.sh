@@ -46,34 +46,49 @@ fi
 brew update
 
 # ----------------------------
-# CLI tools
+# Package selection
 # ----------------------------
-log "Installing CLI tools..."
-brew_install git
-brew_install openssh
-brew_install nvm
-brew_install bun
-brew_install docker
-brew_install colima
-brew_install stow
-# Terminal ricing
-brew_install eza
-brew_install starship
-brew_install zsh-autosuggestions
-brew_install zsh-fast-syntax-highlighting
-brew_install fastfetch
+# type:name — CLI formulae first, then GUI casks.
+PACKAGES=(
+  "formula:git"        "formula:openssh"   "formula:nvm"       "formula:bun"
+  "formula:docker"     "formula:colima"    "formula:stow"      "formula:eza"
+  "formula:starship"   "formula:zsh-autosuggestions"
+  "formula:zsh-fast-syntax-highlighting"  "formula:fastfetch"
+  "cask:arc"           "cask:cursor"       "cask:ghostty"      "cask:raycast"
+  "cask:rectangle"     "cask:bruno"        "cask:font-jetbrains-mono-nerd-font"
+)
 
-# ----------------------------
-# GUI apps
-# ----------------------------
-log "Installing GUI apps..."
-brew_cask_install arc
-brew_cask_install cursor
-brew_cask_install ghostty
-brew_cask_install raycast
-brew_cask_install rectangle
-brew_cask_install bruno
-brew_cask_install font-jetbrains-mono-nerd-font
+# bash 3.2 (default macOS) has no associative arrays — track skips as a padded string.
+SKIP_LIST=" "
+if [[ -t 0 ]]; then
+  log "Packages to install (default: ALL):"
+  i=1
+  for it in "${PACKAGES[@]}"; do
+    printf "  %2d) [%s] %s\n" "$i" "${it%%:*}" "${it#*:}"
+    i=$((i + 1))
+  done
+  printf "\nEnter numbers to SKIP (space-separated), or press Enter to install everything: "
+  read -r skip_nums || skip_nums=""
+  for n in $skip_nums; do
+    [[ "$n" =~ ^[0-9]+$ ]] && SKIP_LIST+="$n "
+  done
+else
+  warn "Non-interactive shell — installing all packages."
+fi
+
+log "Installing packages..."
+i=1
+for it in "${PACKAGES[@]}"; do
+  name="${it#*:}"; kind="${it%%:*}"
+  if [[ "$SKIP_LIST" == *" $i "* ]]; then
+    warn "  skip: $name"
+  elif [[ "$kind" == "formula" ]]; then
+    brew_install "$name"
+  else
+    brew_cask_install "$name"
+  fi
+  i=$((i + 1))
+done
 
 brew cleanup || true
 
