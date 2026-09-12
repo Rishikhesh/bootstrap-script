@@ -136,3 +136,8 @@ eval "$(starship init zsh)"
 # ---- Autosuggestions + syntax highlighting (keep last) ----
 source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
 source "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" 2>/dev/null
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/rixhy/.lmstudio/bin"
+# End of LM Studio CLI section
+

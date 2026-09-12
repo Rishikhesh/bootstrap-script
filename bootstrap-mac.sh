@@ -6,26 +6,7 @@ warn() { printf "\n\033[1;33m%s\033[0m\n" "$*"; }
 
 [[ "$(uname -s)" == "Darwin" ]] || { echo "macOS only"; exit 1; }
 
-brew_install() {
-  brew list --formula "$1" >/dev/null 2>&1 || brew install "$1"
-}
-
-brew_cask_install() {
-  brew list --cask "$1" >/dev/null 2>&1 || brew install --cask "$1"
-}
-
-# Set a global git config key only when it has no value yet.
-# Existing values are never overwritten on re-run.
-git_config_default() {
-  local key="$1" val="$2" current
-  current="$(git config --global --get "$key" 2>/dev/null || true)"
-  if [[ -n "$current" ]]; then
-    log "  git $key already set: $current (keeping)"
-  else
-    git config --global "$key" "$val"
-    log "  git $key = $val"
-  fi
-}
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # ----------------------------
 # Xcode CLI Tools
@@ -59,51 +40,12 @@ fi
 brew update
 
 # ----------------------------
-# Package selection
+# Packages (declarative Brewfile)
 # ----------------------------
-# type:name — CLI formulae first, then GUI casks.
-PACKAGES=(
-  "formula:git"        "formula:openssh"   "formula:nvm"       "formula:bun"
-  "formula:docker"     "formula:colima"    "formula:stow"      "formula:eza"
-  "formula:zoxide"     "formula:fzf"       "formula:bat"       "formula:fd"
-  "formula:starship"   "formula:zsh-autosuggestions"
-  "formula:zsh-fast-syntax-highlighting"  "formula:fastfetch"
-  "cask:arc"           "cask:cursor"       "cask:ghostty"      "cask:raycast"
-  "cask:rectangle"     "cask:bruno"        "cask:font-jetbrains-mono-nerd-font"
-)
-
-# bash 3.2 (default macOS) has no associative arrays — track skips as a padded string.
-SKIP_LIST=" "
-if [[ -t 0 ]]; then
-  log "Packages to install (default: ALL):"
-  i=1
-  for it in "${PACKAGES[@]}"; do
-    printf "  %2d) [%s] %s\n" "$i" "${it%%:*}" "${it#*:}"
-    i=$((i + 1))
-  done
-  printf "\nEnter numbers to SKIP (space-separated), or press Enter to install everything: "
-  read -r skip_nums || skip_nums=""
-  for n in $skip_nums; do
-    [[ "$n" =~ ^[0-9]+$ ]] && SKIP_LIST+="$n "
-  done
-else
-  warn "Non-interactive shell — installing all packages."
-fi
-
-log "Installing packages..."
-i=1
-for it in "${PACKAGES[@]}"; do
-  name="${it#*:}"; kind="${it%%:*}"
-  if [[ "$SKIP_LIST" == *" $i "* ]]; then
-    warn "  skip: $name"
-  elif [[ "$kind" == "formula" ]]; then
-    brew_install "$name"
-  else
-    brew_cask_install "$name"
-  fi
-  i=$((i + 1))
-done
-
+# Edit ./Brewfile to add/remove tools. brew bundle is idempotent —
+# installs what's missing, no-op for what's present.
+log "Syncing Brewfile..."
+brew bundle --file="$SCRIPT_DIR/Brewfile"
 brew cleanup || true
 
 # ----------------------------
@@ -167,8 +109,6 @@ fi
 # ----------------------------
 # Symlink dotfiles (Stow)
 # ----------------------------
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-
 log "Linking dotfiles with Stow..."
 [[ -e "$HOME/.env.secrets" ]] || touch "$HOME/.env.secrets"
 
@@ -202,22 +142,46 @@ fi
 # Link every package folder under dotfiles/ (zsh, ssh, ghostty, starship, ...).
 # Add a new tool = add a new folder; no script edit needed.
 # --restow cleans stale links first so re-runs converge instead of erroring.
-( cd "$PACKAGES_DIR" && stow --restow -t "$HOME" "${STOW_PKGS[@]}" )
+# The `git` module uses --no-folding so ~/.config/git stays a real directory,
+# leaving room for the machine-local work.local beside the linked config.
+for pkg in "${STOW_PKGS[@]}"; do
+  flags=(--restow)
+  [[ "$pkg" == "git" ]] && flags+=(--no-folding)
+  ( cd "$PACKAGES_DIR" && stow "${flags[@]}" -t "$HOME" "$pkg" )
+done
 [[ -e "$HOME/.ssh/config" ]] && chmod 600 "$HOME/.ssh/config"
 log "Dotfiles linked"
 
 # ----------------------------
-# Git config (personal)
+# Git config
 # ----------------------------
-log "Configuring git (existing values are preserved)..."
-git_config_default user.name "rishikhesh"
-git_config_default user.email "rishiyashvanth@gmail.com"
-git_config_default init.defaultBranch beta
-git_config_default fetch.prune true
-git_config_default pull.rebase true
-git_config_default gpg.format ssh
-git_config_default commit.gpgsign true
-git_config_default user.signingkey "$KEY.pub"
+# Personal identity lives in the tracked, stowed file ~/.config/git/config.
+# Nothing is written with `git config --global` anymore, so re-runs never
+# clobber your settings. Two housekeeping steps:
+
+# 1) Retire any legacy ~/.gitconfig — it has HIGHER precedence than the XDG
+#    file and would silently shadow the stowed config. Back it up once.
+if [[ -f "$HOME/.gitconfig" && ! -L "$HOME/.gitconfig" ]]; then
+  backup="$HOME/.gitconfig.backup.$(date +%Y%m%d%H%M%S)"
+  warn "Legacy ~/.gitconfig found — backing up to $backup (stowed config takes over)"
+  mv "$HOME/.gitconfig" "$backup"
+fi
+
+# 2) Seed a machine-local work identity template (untracked). Repos under
+#    ~/work/ use it via the includeIf in the stowed config. Never overwritten.
+WORK_LOCAL="$HOME/.config/git/work.local"
+if [[ ! -e "$WORK_LOCAL" ]]; then
+  log "Seeding work identity template at $WORK_LOCAL (edit with your work details)"
+  cat > "$WORK_LOCAL" <<'EOF'
+# Machine-local work identity — NOT tracked in the dotfiles repo.
+# Applies to any repo under ~/work/ (see includeIf in ~/.config/git/config).
+[user]
+	name = rishikhesh
+	email = dev@cypherd.io
+	# signingkey = ~/.ssh/id_ed25519_work.pub
+EOF
+fi
+log "Git config linked (personal) + work.local ready"
 
 # ----------------------------
 # Start Colima

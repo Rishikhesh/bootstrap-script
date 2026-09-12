@@ -7,8 +7,18 @@ dotfiles/.ssh/id_*
 dotfiles/.ssh/known_hosts*
 !dotfiles/.ssh/config
 
+# Git machine-local work identity (seeded by bootstrap, never tracked)
+dotfiles/git/.config/git/work.local
+
+# Zsh state & caches
+.zcompdump*
+.zsh_history
+.zsh_sessions/
+
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
 
 # Editor
 *.swp

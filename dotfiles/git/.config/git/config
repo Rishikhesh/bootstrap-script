@@ -1,0 +1,31 @@
+# Tracked git config (personal identity). Stowed to ~/.config/git/config.
+# Edit this file, not `git config --global` — changes survive re-runs.
+
+[user]
+	name = rishikhesh
+	email = rishiyashvanth@gmail.com
+	signingkey = ~/.ssh/id_ed25519.pub
+
+[init]
+	defaultBranch = beta
+
+[fetch]
+	prune = true
+
+[pull]
+	rebase = true
+
+[commit]
+	gpgsign = true
+
+[gpg]
+	format = ssh
+
+[rerere]
+	enabled = true
+
+# Work identity lives outside this repo (machine-local, not tracked).
+# The bootstrap script writes a ~/.config/git/work.local template.
+# Any repo under ~/work/ overrides user/email/signingkey from that file.
+[includeIf "gitdir:~/work/"]
+	path = ~/.config/git/work.local
