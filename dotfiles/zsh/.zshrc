@@ -4,13 +4,6 @@ source ~/.env.secrets
 # ---- Homebrew prefix (cached once) ----
 BREW_PREFIX="$(brew --prefix 2>/dev/null)"
 
-# ---- Clean full-screen Ghostty intro + static system stats ----
-# Narrow or short splits skip the animation and stay clean.
-if [[ -o interactive && $TERM_PROGRAM == ghostty ]] \
-  && (( ${COLUMNS:-0} >= 100 && ${LINES:-0} >= 22 )); then
-  zsh ~/.config/fastfetch/ghostty-intro.zsh
-fi
-
 # ---- NVM ----
 export NVM_DIR="$HOME/.nvm"
 
@@ -129,13 +122,6 @@ alias gl='git log --oneline'
 
 # ---- Dotfiles quick-sync ----
 alias dots='cd ~/personal/bootstrap-script && git add -A && git commit -m "update dotfiles" && git push'
-
-# ---- Prompt (starship) ----
-eval "$(starship init zsh)"
-
-# ---- Autosuggestions + syntax highlighting (keep last) ----
-source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" 2>/dev/null
-source "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" 2>/dev/null
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/rixhy/.lmstudio/bin"

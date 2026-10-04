@@ -111,6 +111,10 @@ fi
 # ----------------------------
 log "Linking dotfiles with Stow..."
 [[ -e "$HOME/.env.secrets" ]] || touch "$HOME/.env.secrets"
+# ~/.claude must be a real directory before stowing the `ai` package; otherwise
+# Stow would fold all of ~/.claude (history, credentials) into this repo. With it
+# present, Stow links only ~/.claude/skills and the config files.
+mkdir -p "$HOME/.claude"
 
 # Let Stow itself report conflicts (dry-run), then back up ONLY the real files
 # it names. Never walk the tree by hand: a target path can be a symlink into
@@ -139,7 +143,7 @@ if [[ -n "$conflicts" ]]; then
   done <<< "$conflicts"
 fi
 
-# Link every package folder under dotfiles/ (zsh, ssh, ghostty, starship, ...).
+# Link every package folder under dotfiles/ (zsh, ssh, bat, fastfetch, ...).
 # Add a new tool = add a new folder; no script edit needed.
 # --restow cleans stale links first so re-runs converge instead of erroring.
 # The `git` module uses --no-folding so ~/.config/git stays a real directory,
@@ -207,6 +211,7 @@ echo "  2) Test: ssh -T git@github-personal"
 echo "  3) Open Rectangle and Raycast once (macOS permissions)"
 echo "  4) Restart terminal"
 echo "  5) Per repo: run 'nvm install' / 'nvm use' when .nvmrc is present"
+echo "  6) Open Claude Code once: plugins in ~/.claude/settings.json reinstall themselves"
 echo ""
 
 # Only hijack the clipboard when the key was just created.

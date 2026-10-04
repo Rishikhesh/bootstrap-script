@@ -23,3 +23,8 @@ dotfiles/git/.config/git/work.local
 # Editor
 *.swp
 *~
+
+# AI skills (dotfiles/ai): machine-managed or re-downloadable parts
+dotfiles/ai/.claude/skills/synced/
+dotfiles/ai/.claude/skills/.trash/
+dotfiles/ai/.claude/skills/impeccable/scripts/bin/

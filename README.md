@@ -19,8 +19,8 @@ you want to **skip** (space-separated), or just press Enter to install everythin
 ## What it installs
 
 - **CLI**: git, openssh, nvm, bun, docker, colima, stow, zoxide, fzf, bat, fd
-- **Ricing**: eza, fastfetch, starship, zsh-autosuggestions, zsh-fast-syntax-highlighting
-- **GUI**: arc, cursor, ghostty, raycast, rectangle, bruno, JetBrainsMono Nerd Font
+- **Ricing**: eza, fastfetch
+- **GUI**: arc, cursor, warp, raycast, rectangle, bruno, JetBrainsMono Nerd Font
 
 ## Dotfiles (Stow)
 
@@ -31,9 +31,8 @@ mirrors `$HOME`.
 dotfiles/
   zsh/.zshrc                       -> ~/.zshrc
   ssh/.ssh/config                  -> ~/.ssh/config
-  ghostty/.config/ghostty/config   -> ~/.config/ghostty/config
   bat/.config/bat/config           -> ~/.config/bat/config
-  starship/.config/starship.toml   -> ~/.config/starship.toml
+  fastfetch/.config/fastfetch/     -> ~/.config/fastfetch/
 ```
 
 The script links every package at once:
@@ -43,7 +42,7 @@ cd dotfiles && stow -t "$HOME" */
 ```
 
 Adding a new tool = add a new folder (e.g. `dotfiles/git/.gitconfig`); it gets
-picked up automatically. Link one on its own with `stow -t "$HOME" ghostty`.
+picked up automatically. Link one on its own with `stow -t "$HOME" bat`.
 
 Edit files in this repo (or the live symlinked paths — same file), then push:
 
@@ -56,6 +55,27 @@ Re-link after adding files:
 ```bash
 cd ~/personal/bootstrap-script/dotfiles && stow -R -t "$HOME" */
 ```
+
+## AI skills and Claude config (`dotfiles/ai`)
+
+All agent skills ship with the repo, so a new machine needs no reinstalls:
+
+```
+dotfiles/ai/
+  .agents/skills/ + .skill-lock.json   -> ~/.agents        (skills from `npx skills add`)
+  .claude/skills/                      -> ~/.claude/skills (Claude Code skills; many link into ~/.agents)
+  .claude/settings.json                -> ~/.claude/settings.json
+  .claude/CLAUDE.md, RTK.md            -> ~/.claude/
+```
+
+- Because the folders are linked (not copied), anything you install later
+  (`npx skills add ...`, a skill's own installer) lands inside this repo. Run
+  `dots` to commit it.
+- Claude Code plugins aren't stored here: `settings.json` lists them in
+  `enabledPlugins` + `extraKnownMarketplaces`, and Claude Code installs them on
+  first launch.
+- Not tracked (see `.gitignore`): `skills/synced` and `skills/.trash` (managed by
+  Claude Code) and impeccable's binary (downloaded on first use).
 
 ## Developer shell shortcuts
 
