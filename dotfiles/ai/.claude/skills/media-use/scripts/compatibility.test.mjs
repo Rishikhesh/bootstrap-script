@@ -4,6 +4,8 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import test from "node:test";
 
+process.env.HYPERFRAMES_MEDIA_HOME = mkdtempSync(join(tmpdir(), "media-use-compat-home-"));
+
 function run(scriptsDir, script, args) {
   return execFileSync(process.execPath, [join(scriptsDir, script), ...args], {
     encoding: "utf8",
@@ -23,5 +25,17 @@ test("published memory scripts run without reaching outside the skill", () => {
     run(scriptsDir, "transcribe.mjs", ["--help"]);
   } finally {
     rmSync(scratchDir, { recursive: true, force: true });
+  }
+});
+
+test("published audio helpers import without the CLI package tree", () => {
+  const root = mkdtempSync(join(tmpdir(), "media-use-audio-"));
+  const skill = join(root, "media-use");
+  try {
+    cpSync(new URL("..", import.meta.url), skill, { recursive: true });
+    for (const helper of ["heygen.mjs", "tts.mjs"])
+      run(join(skill, "audio/scripts/lib"), helper, []);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
   }
 });

@@ -15,9 +15,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
       "skillPath": "skills/react-best-practices/SKILL.md",
-      "skillFolderHash": "a203aee7243640ceb56ce2c6c4ab286573df5e69",
+      "skillFolderHash": "343db72180d05814949fef7d46be96b5c6ee86b3",
       "installedAt": "2026-02-18T05:24:29.813Z",
-      "updatedAt": "2026-04-04T09:26:00.016Z"
+      "updatedAt": "2026-10-04T23:21:39.354Z"
     },
     "vercel-react-native-skills": {
       "source": "vercel-labs/agent-skills",
@@ -60,9 +60,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
       "skillPath": "skills/react-view-transitions/SKILL.md",
-      "skillFolderHash": "4d46c637057aae90b9ec5280190c25dc0d90ec28",
+      "skillFolderHash": "13063dbbfc1b085cbc11b9bd5d4324aa2f41bb3a",
       "installedAt": "2026-04-04T09:26:00.018Z",
-      "updatedAt": "2026-04-04T09:26:00.018Z"
+      "updatedAt": "2026-10-04T23:21:39.358Z"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
@@ -71,7 +71,7 @@
       "skillPath": "skills/web-design-guidelines/SKILL.md",
       "skillFolderHash": "3116f3e62dbd02b44a598b1aa690d2a8938e8f89",
       "installedAt": "2026-04-04T09:26:00.019Z",
-      "updatedAt": "2026-04-04T09:26:00.019Z"
+      "updatedAt": "2026-10-04T23:21:39.359Z"
     },
     "agent-pay": {
       "source": "CypherD-IO/agent-pay",
@@ -100,15 +100,6 @@
       "installedAt": "2026-09-23T05:26:21.495Z",
       "updatedAt": "2026-09-23T05:26:21.495Z"
     },
-    "figma": {
-      "source": "heygen-com/hyperframes",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
-      "skillPath": "skills/figma/SKILL.md",
-      "skillFolderHash": "85103f8ce508b3ec23920be78a4187a2a3b47f8f",
-      "installedAt": "2026-09-23T05:26:21.497Z",
-      "updatedAt": "2026-09-23T05:26:21.497Z"
-    },
     "general-video": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
@@ -123,10 +114,10 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
       "skillPath": "skills/hyperframes/SKILL.md",
-      "skillFolderHash": "35cae77fb96db5563589f2bfaf71d57acc9b2c2a",
+      "skillFolderHash": "787ff290585e2b67a9c0d3e16197fc633fe50036",
       "pluginName": "core-skills",
       "installedAt": "2026-09-23T05:26:21.499Z",
-      "updatedAt": "2026-09-23T05:26:21.499Z"
+      "updatedAt": "2026-10-25T16:00:56.177Z"
     },
     "hyperframes-animation": {
       "source": "heygen-com/hyperframes",
@@ -153,10 +144,10 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
       "skillPath": "skills/hyperframes-cli/SKILL.md",
-      "skillFolderHash": "10cee5610d8065495b55521a85584f0c8d451fa7",
+      "skillFolderHash": "918cc84dcafea67f01171ccc74bb9c015804259d",
       "pluginName": "core-skills",
       "installedAt": "2026-09-23T05:26:21.502Z",
-      "updatedAt": "2026-09-23T05:26:21.502Z"
+      "updatedAt": "2026-10-25T16:00:56.179Z"
     },
     "hyperframes-core": {
       "source": "heygen-com/hyperframes",
@@ -193,10 +184,10 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
       "skillPath": "skills/hyperframes-registry/SKILL.md",
-      "skillFolderHash": "37afff98e3c7047ad062aff534a8f7849e1796fb",
+      "skillFolderHash": "ca95458584add658afa2a9eaa986795949970103",
       "pluginName": "core-skills",
       "installedAt": "2026-09-23T05:26:21.507Z",
-      "updatedAt": "2026-09-23T05:26:21.507Z"
+      "updatedAt": "2026-10-25T16:00:56.180Z"
     },
     "hyperframes-studio": {
       "source": "heygen-com/hyperframes",
@@ -213,10 +204,10 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
       "skillPath": "skills/media-use/SKILL.md",
-      "skillFolderHash": "5b21b8fe8e2ed8454940dc54d42526e3e550d64d",
+      "skillFolderHash": "972d0c8fb1ba4e545cfd34fc121ef1c809072cbf",
       "pluginName": "core-skills",
       "installedAt": "2026-09-23T05:26:21.509Z",
-      "updatedAt": "2026-09-23T05:26:21.509Z"
+      "updatedAt": "2026-10-25T16:00:56.181Z"
     },
     "motion-graphics": {
       "source": "heygen-com/hyperframes",
@@ -259,18 +250,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
       "skillPath": "skills/remotion-to-hyperframes/SKILL.md",
-      "skillFolderHash": "983321a385ed0017cfa477227e3889553fb9701d",
+      "skillFolderHash": "40999548d5dd34f488f2529aaefd3cdeceb0577a",
       "installedAt": "2026-09-23T05:26:21.513Z",
-      "updatedAt": "2026-09-23T05:26:21.513Z"
+      "updatedAt": "2026-10-25T16:00:56.182Z"
     },
     "slideshow": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "sourceUrl": "https://github.com/heygen-com/hyperframes.git",
       "skillPath": "skills/slideshow/SKILL.md",
-      "skillFolderHash": "005df733904981910d67d74b0e04ac88ce9273cb",
+      "skillFolderHash": "ef2bc240614444b088f610cd11a09c9ce5909167",
       "installedAt": "2026-09-23T05:26:21.514Z",
-      "updatedAt": "2026-09-23T05:26:21.514Z"
+      "updatedAt": "2026-10-25T16:00:56.183Z"
     },
     "talking-head-recut": {
       "source": "heygen-com/hyperframes",
@@ -280,123 +271,6 @@
       "skillFolderHash": "03a61aa306b3e481861d5cfea6d206435a99c187",
       "installedAt": "2026-09-23T05:26:21.515Z",
       "updatedAt": "2026-09-23T05:26:21.515Z"
-    },
-    "brandkit": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/brandkit/SKILL.md",
-      "skillFolderHash": "d278ff748cafab01e4ae5dd7758fc0b53258621c",
-      "installedAt": "2026-10-04T18:38:39.791Z",
-      "updatedAt": "2026-10-04T18:38:39.791Z"
-    },
-    "design-taste-frontend": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/taste-skill/SKILL.md",
-      "skillFolderHash": "a6d128e53b4ec0238baee751dde33bf707adb5ec",
-      "installedAt": "2026-10-04T18:38:39.793Z",
-      "updatedAt": "2026-10-04T18:38:39.793Z"
-    },
-    "design-taste-frontend-v1": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/taste-skill-v1/SKILL.md",
-      "skillFolderHash": "3642ecef471a6ee4d9d485feea6df8ba92616b78",
-      "installedAt": "2026-10-04T18:38:39.794Z",
-      "updatedAt": "2026-10-04T18:38:39.794Z"
-    },
-    "full-output-enforcement": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/output-skill/SKILL.md",
-      "skillFolderHash": "3dd6ad49b667d15182acddc9d3e4f7763ae33c9c",
-      "installedAt": "2026-10-04T18:38:39.794Z",
-      "updatedAt": "2026-10-04T18:38:39.794Z"
-    },
-    "gpt-taste": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/gpt-tasteskill/SKILL.md",
-      "skillFolderHash": "c87d529ad945cd35985b19475bf53f41682d4f69",
-      "installedAt": "2026-10-04T18:38:39.795Z",
-      "updatedAt": "2026-10-04T18:38:39.795Z"
-    },
-    "high-end-visual-design": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/soft-skill/SKILL.md",
-      "skillFolderHash": "1b5943432ddd1b980206968c529a323cc992dbec",
-      "installedAt": "2026-10-04T18:38:39.796Z",
-      "updatedAt": "2026-10-04T18:38:39.796Z"
-    },
-    "image-to-code": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/image-to-code-skill/SKILL.md",
-      "skillFolderHash": "701b3cb89c061fcf98a98f639e0b0b5c0b492479",
-      "installedAt": "2026-10-04T18:38:39.797Z",
-      "updatedAt": "2026-10-04T18:38:39.797Z"
-    },
-    "imagegen-frontend-mobile": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/imagegen-frontend-mobile/SKILL.md",
-      "skillFolderHash": "9901fcde67e9506a706912107825fdfb72e01f30",
-      "installedAt": "2026-10-04T18:38:39.797Z",
-      "updatedAt": "2026-10-04T18:38:39.797Z"
-    },
-    "imagegen-frontend-web": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/imagegen-frontend-web/SKILL.md",
-      "skillFolderHash": "3b5117d349200e33f9c3399344681620079dcc18",
-      "installedAt": "2026-10-04T18:38:39.798Z",
-      "updatedAt": "2026-10-04T18:38:39.798Z"
-    },
-    "industrial-brutalist-ui": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/brutalist-skill/SKILL.md",
-      "skillFolderHash": "f812ede7e5c34cf680f629911e9f9ac05e416cf4",
-      "installedAt": "2026-10-04T18:38:39.798Z",
-      "updatedAt": "2026-10-04T18:38:39.798Z"
-    },
-    "minimalist-ui": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/minimalist-skill/SKILL.md",
-      "skillFolderHash": "5509c012862cda27e2ed7efae89ed940ecc53add",
-      "installedAt": "2026-10-04T18:38:39.799Z",
-      "updatedAt": "2026-10-04T18:38:39.799Z"
-    },
-    "redesign-existing-projects": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/redesign-skill/SKILL.md",
-      "skillFolderHash": "d9cffe56d26d4af7687299e391a7be1cfaf46c1b",
-      "installedAt": "2026-10-04T18:38:39.800Z",
-      "updatedAt": "2026-10-04T18:38:39.800Z"
-    },
-    "stitch-design-taste": {
-      "source": "Leonxlnx/taste-skill",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/Leonxlnx/taste-skill.git",
-      "skillPath": "skills/stitch-skill/SKILL.md",
-      "skillFolderHash": "de2038cf286b31f33b397c1308455dbc17ef26f3",
-      "installedAt": "2026-10-04T18:38:39.800Z",
-      "updatedAt": "2026-10-04T18:38:39.800Z"
     },
     "animate": {
       "source": "emilkowalski/skills",
@@ -532,6 +406,33 @@
       "skillFolderHash": "8e824bc2c2d03090eeb3b3777ba9d1ecd960aa62",
       "installedAt": "2026-10-04T18:41:18.311Z",
       "updatedAt": "2026-10-04T18:41:18.311Z"
+    },
+    "writing-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
+      "skillPath": "skills/writing-guidelines/SKILL.md",
+      "skillFolderHash": "17d954cadfb8dec50bf0c707c9e7634be9ae9fe8",
+      "installedAt": "2026-10-04T23:21:39.360Z",
+      "updatedAt": "2026-10-04T23:21:39.360Z"
+    },
+    "anatomy": {
+      "source": "wheresryan22/anatomy",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/wheresryan22/anatomy.git",
+      "skillPath": "SKILL.md",
+      "skillFolderHash": "e6600ffc4e8e6620eeb45bf49bcdbd5e4b84163f",
+      "installedAt": "2026-10-14T04:35:34.344Z",
+      "updatedAt": "2026-10-14T04:35:34.344Z"
+    },
+    "security-audit": {
+      "source": "cloudflare/security-audit-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/cloudflare/security-audit-skill.git",
+      "skillPath": "skills/security-audit/SKILL.md",
+      "skillFolderHash": "ccbc33ed119b28c3ef7b44a7e2081ab191ad63af",
+      "installedAt": "2026-11-09T10:48:02.903Z",
+      "updatedAt": "2026-11-09T10:48:02.903Z"
     }
   },
   "dismissed": {
@@ -543,11 +444,13 @@
     "codex",
     "cursor",
     "droid",
+    "fx",
     "gemini-cli",
     "github-copilot",
     "kilo",
     "kimi-code-cli",
     "opencode",
+    "pi",
     "warp",
     "zed",
     "claude-code"

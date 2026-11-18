@@ -1,11 +1,9 @@
 {
   "enabledPlugins": {
-    "figma@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "andrej-karpathy-skills@karpathy-skills": true,
     "ponytail@ponytail": true,
-    "typesafe@typesafe-ai": true,
-    "brag@brag": true
+    "typesafe@typesafe-ai": true
   },
   "extraKnownMarketplaces": {
     "superpowers-marketplace": {
@@ -58,15 +56,10 @@
         "source": "github",
         "repo": "typesafe-ai/skills"
       }
-    },
-    "brag": {
-      "source": {
-        "source": "github",
-        "repo": "latent-spaces/brag"
-      }
     }
   },
   "effortLevel": "xhigh",
   "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
   "agentPushNotifEnabled": true
 }

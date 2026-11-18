@@ -7,30 +7,7 @@ BREW_PREFIX="$(brew --prefix 2>/dev/null)"
 # ---- NVM ----
 export NVM_DIR="$HOME/.nvm"
 
-load-nvm() {
-  (( ${NVM_IS_LOADED:-0} )) && return 0
-
-  local nvm_script="$BREW_PREFIX/opt/nvm/nvm.sh"
-
-  [[ -s "$nvm_script" ]] || {
-    print -u2 "NVM is not installed at $nvm_script"
-    return 1
-  }
-
-  # Remove the command shims before NVM adds Node to PATH.
-  unfunction nvm node npm npx corepack yarn pnpm 2>/dev/null
-  \. "$nvm_script" || return
-  typeset -g NVM_IS_LOADED=1
-}
-
-# Load NVM only when a Node command is used.
-nvm()      { load-nvm || return; nvm "$@"; }
-node()     { load-nvm || return; command node "$@"; }
-npm()      { load-nvm || return; command npm "$@"; }
-npx()      { load-nvm || return; command npx "$@"; }
-corepack() { load-nvm || return; command corepack "$@"; }
-yarn()     { load-nvm || return; command yarn "$@"; }
-pnpm()     { load-nvm || return; command pnpm "$@"; }
+[ -s "$BREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$BREW_PREFIX/opt/nvm/nvm.sh"
 
 # ---- Auto .nvmrc ----
 autoload -U add-zsh-hook
@@ -38,8 +15,6 @@ autoload -U add-zsh-hook
 load-nvmrc() {
   local nvmrc_path="$PWD/.nvmrc"
   [[ -f "$nvmrc_path" ]] || return
-
-  load-nvm || return
 
   local node_version current_version installed_version
   IFS= read -r node_version < "$nvmrc_path"
@@ -127,3 +102,12 @@ alias dots='cd ~/personal/bootstrap-script && git add -A && git commit -m "updat
 export PATH="$PATH:/Users/rixhy/.lmstudio/bin"
 # End of LM Studio CLI section
 
+
+# bun completions
+[ -s "/Users/rixhy/.bun/_bun" ] && source "/Users/rixhy/.bun/_bun"
+eval "$(rbenv init - zsh)"
+
+# Android / React Native
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH"
+export JAVA_HOME="$(/usr/libexec/java_home -v 21 2>/dev/null)"
